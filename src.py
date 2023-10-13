@@ -49,13 +49,19 @@ def process_call_graph(callgraph_file):
 
     return G
 
-def visualize_graph(G):
-    pos = nx.spring_layout(G)  # Layout for our graph
-    nx.draw_networkx_nodes(G, pos)
-    nx.draw_networkx_labels(G, pos)
-    nx.draw_networkx_edges(G, pos, arrow=True)
-    plt.show()
 
+def visualize_graph(G):
+    pos = nx.shell_layout(G)
+
+    nx.draw_networkx_nodes(G, pos, node_size=50)
+
+    nx.draw_networkx_labels(G, pos, font_size=8)
+
+    nx.draw_networkx_edges(G, pos, width=0.5)
+
+    # Show the graph
+    plt.figure(figsize=(12, 12))  # Increase the size of the figure for better visualization
+    plt.show()
 
 
 
@@ -68,7 +74,7 @@ def calculate_metrics(G):
 def main():
     repo_url = "https://github.com/Chetan496/cpp-algortihms.git"
     repo_name = fetch_github_repo(repo_url)
-    callgraph_file = generate_call_graph(repo_name, "heapSort.c")
+    callgraph_file = generate_call_graph(repo_name, "fibonacci.c")
     G = process_call_graph(callgraph_file)
     visualize_graph(G)
     metrics = calculate_metrics(G)
