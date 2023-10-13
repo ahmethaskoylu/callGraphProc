@@ -1,4 +1,3 @@
-# This is a sample Python script.
 
 
 
@@ -15,7 +14,6 @@ def fetch_github_repo(repo_url, commit_hash=None):
     repo_name = repo_url.split("/")[-1].replace(".git", "")
     subprocess.run(["git", "clone", repo_url])
 
-    # Checkout to a specific commit if provided
     if commit_hash:
         subprocess.run(["git", "-C", repo_name, "checkout", commit_hash])
 
@@ -50,18 +48,28 @@ def process_call_graph(callgraph_file):
     return G
 
 
-def visualize_graph(G):
+def visualize_graph(G, metrics):
     pos = nx.shell_layout(G)
 
-    nx.draw_networkx_nodes(G, pos, node_size=50)
+    # Create a list of node sizes based on degree centrality
+    node_sizes = [metrics[node] * 5000 for node in G.nodes()]
 
-    nx.draw_networkx_labels(G, pos, font_size=8)
+    # Draw nodes with sizes based on degree centrality
+    nx.draw_networkx_nodes(G, pos, node_size=node_sizes, alpha=0.6)
 
-    nx.draw_networkx_edges(G, pos, width=0.5)
+    # Draw labels with smaller font size
+    labels = {node: f"{node}\n({metrics[node]:.2f})" for node in G.nodes()}  # Add metric value to label
+    nx.draw_networkx_labels(G, pos, labels=labels, font_size=8)
+
+    # Draw edges with reduced width
+    nx.draw_networkx_edges(G, pos, width=0.5, alpha=0.6)
 
     # Show the graph
     plt.figure(figsize=(12, 12))  # Increase the size of the figure for better visualization
     plt.show()
+
+
+
 
 
 
@@ -76,9 +84,11 @@ def main():
     repo_name = fetch_github_repo(repo_url)
     callgraph_file = generate_call_graph(repo_name, "fibonacci.c")
     G = process_call_graph(callgraph_file)
-    visualize_graph(G)
     metrics = calculate_metrics(G)
+    visualize_graph(G, metrics)  # Pass both G and metrics to the function
     print(metrics)
+
+
 
 if __name__ == "__main__":
     main()
