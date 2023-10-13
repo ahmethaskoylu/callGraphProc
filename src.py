@@ -29,35 +29,34 @@ def generate_call_graph(repo_name, entry_file):
 
 
 def process_call_graph(callgraph_file):
-    G = nx.DiGraph()
-    stack = []  # This will help us keep track of function hierarchy
+    G = nx.DiGraph()  # Create a directed graph
 
     with open(callgraph_file, 'r') as f:
-        for line in f:
-            stripped = line.rstrip()
-            indent = len(line) - len(stripped)  # Calculate the whitespace at the start
-            function_name = stripped.split(" ")[0]  # Get the function name from the stripped line
+        lines = f.readlines()
 
-            # If the stack is empty or the indent has increased, we just add to the stack
-            if not stack or indent > stack[-1][1]:
-                stack.append((function_name, indent))
-            else:
-                while stack and indent <= stack[-1][1]:
-                    stack.pop()
-                stack.append((function_name, indent))
+    stack = []
+    for line in lines:
+        level = len(line) - len(line.lstrip())
+        func_name = line.strip().split()[0]
 
-            # If there are at least two functions in the stack, add an edge
-            if len(stack) > 1:
-                G.add_edge(stack[-2][0], stack[-1][0])
+        while len(stack) > level:  # Remove deeper or same level items
+            stack.pop()
 
-    # Visualize
-    pos = nx.spring_layout(G)  # Positioning of nodes
-    nx.draw(G, pos, with_labels=True, node_size=2000, node_color="skyblue", font_size=10, width=2, edge_color="gray")
-    plt.savefig("graph_output.png")
-    #print("Nodes:", G.nodes())
-    #print("Edges:", G.edges())
+        if stack:  # if stack is not empty, there is a parent
+            G.add_edge(stack[-1], func_name)
+
+        stack.append(func_name)
 
     return G
+
+def visualize_graph(G):
+    pos = nx.spring_layout(G)  # Layout for our graph
+    nx.draw_networkx_nodes(G, pos)
+    nx.draw_networkx_labels(G, pos)
+    nx.draw_networkx_edges(G, pos, arrow=True)
+    plt.show()
+
+
 
 
 
@@ -71,6 +70,7 @@ def main():
     repo_name = fetch_github_repo(repo_url)
     callgraph_file = generate_call_graph(repo_name, "heapSort.c")
     G = process_call_graph(callgraph_file)
+    visualize_graph(G)
     metrics = calculate_metrics(G)
     print(metrics)
 
