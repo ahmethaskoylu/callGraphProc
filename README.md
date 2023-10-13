@@ -1,8 +1,6 @@
 # callGraphProc
 
-Tabii ki! Aşağıda, projeniz için bir README taslağı oluşturdum:
 
----
 
 # Call Graph Analysis from Source Code Snapshots
 
