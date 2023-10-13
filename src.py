@@ -87,6 +87,7 @@ def main():
     metrics = calculate_metrics(G)
     visualize_graph(G, metrics)  # Pass both G and metrics to the function
     print(metrics)
+    #a
 
 
 
