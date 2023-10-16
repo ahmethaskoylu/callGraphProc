@@ -42,6 +42,3 @@ This project aims to apply static analysis on successive versions of source code
 2. Improve visualization aesthetics and clarity.
 3. Enhance vulnerability detection capabilities by mapping known vulnerabilities to call graph nodes.
 
----
-
-Bu README, projenizin ana hatlarına dayanarak hazırlanmıştır. İhtiyaçlarınıza daha uygun hale getirmek için içeriği düzenleyebilirsiniz. Eğer eklememi veya değiştirmemi istediğiniz bölümler olursa, lütfen bana bildirin!
