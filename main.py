@@ -1,7 +1,7 @@
-from callgraph_utils import *
-from github_utils import *
-from metrics_utils import *
-from visualization_utils import *
+from utils.callgraph_utils import *
+from utils.github_utils import *
+from utils.metrics_utils import *
+from utils.visualization_utils import *
 
 def main():
     repo_url = "https://github.com/Chetan496/cpp-algortihms.git"
