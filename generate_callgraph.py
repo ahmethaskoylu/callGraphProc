@@ -1,13 +1,27 @@
-import clone_repo
-from clone_repo import *
+import subprocess
 
-def generate_call_graph(repo_name, entry_file):
-    output = subprocess.check_output(["cflow", f"{repo_name}/{entry_file}"])
-    with open(f"{repo_name}_callgraph.txt", "wb") as f:
+def generate_call_graph(repo_name):
+    # Find all C files in the repo
+    c_files = subprocess.check_output(["find", repo_name, "-name", "*.c"]).decode("utf-8").strip().split("\n")
+
+    # Initialize an empty byte string to store the output
+    output = b""
+
+    # Generate the call graph for each C file
+    for c_file in c_files:
+        try:
+            output += subprocess.check_output(["cflow", c_file])
+        except subprocess.CalledProcessError as e:
+            print(f"An error occurred while processing {c_file}: {e}")
+
+    # Write the output to a file
+    callgraph_file = f"{repo_name}_callgraph.txt"
+    with open(callgraph_file, "wb") as f:
         f.write(output)
-    return f"{repo_name}_callgraph.txt"
+
+    return callgraph_file
 
 if __name__ == "__main__":
-    repo_name = clone_repo.clone_github_repo(clone_repo.repo_url)
-    entry_file = "fibonacci.c"  # Çağrı grafiği oluşturulacak giriş dosyası
-    callgraph_file = generate_call_graph(repo_name, entry_file)
+    repo_name = input("Enter the repository name: ")
+    callgraph_file = generate_call_graph(repo_name)
+    print(f"Call graph has been generated and saved to {callgraph_file}.")
