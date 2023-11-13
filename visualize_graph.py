@@ -32,6 +32,18 @@ def compare_call_graphs(file1, file2):
     distance = Levenshtein.distance(content1, content2)
     return distance
 
+def compare_call_graphs_similarity(file1, file2):
+    with open(file1, 'r') as f1, open(file2, 'r') as f2:
+        content1 = f1.read()
+        content2 = f2.read()
+
+    distance = Levenshtein.distance(content1, content2)
+    max_len = max(len(content1), len(content2))
+
+    similarity_percentage = ((max_len - distance) / max_len) * 100
+    return similarity_percentage
+
+
 def calculate_metrics(G):
     degree_centrality = nx.degree_centrality(G)
     return degree_centrality
@@ -86,6 +98,8 @@ if __name__ == "__main__":
         visualize_graph_comparison(G_previous, G_current)
         distance = compare_call_graphs(callgraph_file_previous, callgraph_file_current)
         print(f"Levenshtein distance between the two call graphs: {distance}")
+        similarity_percentage = compare_call_graphs_similarity(callgraph_file_previous, callgraph_file_current)
+        print(f"Similarity percentage between the two call graphs: {similarity_percentage:.2f}%")
 
     elif visualization_type == "2":
         callgraph_file = input("Enter the call graph file name: ")
