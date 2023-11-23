@@ -3,12 +3,15 @@ matplotlib.use('MacOSX')
 import networkx as nx
 import matplotlib.pyplot as plt
 import sys
+import Levenshtein
+import json
 
 
 def process_call_graph(callgraph_file):
     G = nx.DiGraph()
     with open(callgraph_file, 'r') as f:
         lines = f.readlines()
+
     stack = []
     for line in lines:
         level = len(line) - len(line.lstrip())
@@ -18,7 +21,28 @@ def process_call_graph(callgraph_file):
         if stack:
             G.add_edge(stack[-1], func_name)
         stack.append(func_name)
+
     return G
+
+def compare_call_graphs(file1, file2):
+    with open(file1, 'r') as f1, open(file2, 'r') as f2:
+        content1 = f1.read()
+        content2 = f2.read()
+
+    distance = Levenshtein.distance(content1, content2)
+    return distance
+
+def compare_call_graphs_similarity(file1, file2):
+    with open(file1, 'r') as f1, open(file2, 'r') as f2:
+        content1 = f1.read()
+        content2 = f2.read()
+
+    distance = Levenshtein.distance(content1, content2)
+    max_len = max(len(content1), len(content2))
+
+    similarity_percentage = ((max_len - distance) / max_len) * 100
+    return similarity_percentage
+
 
 def calculate_metrics(G):
     degree_centrality = nx.degree_centrality(G)
@@ -67,11 +91,30 @@ def visualize_graph_comparison(G_previous, G_current):
 if __name__ == "__main__":
     visualization_type = input("Enter the visualization type (1 for comparison, 2 for single): ")
     if visualization_type == "1":
-        callgraph_file_previous = input("Enter the previous call graph file name: ")
-        callgraph_file_current = input("Enter the current call graph file name: ")
-        G_previous = process_call_graph(callgraph_file_previous)
-        G_current = process_call_graph(callgraph_file_current)
-        visualize_graph_comparison(G_previous, G_current)
+        config_file = input("Enter the path to the configuration file (config.json): ")
+        try:
+            with open(config_file, 'r') as config_f:
+                config = json.load(config_f)
+
+            callgraph_file_previous = config["call_graphs"]["previous"]
+            callgraph_file_current = config["call_graphs"]["current"]
+
+            G_previous = process_call_graph(callgraph_file_previous)
+            G_current = process_call_graph(callgraph_file_current)
+            visualize_graph_comparison(G_previous, G_current)
+
+            distance = compare_call_graphs(callgraph_file_previous, callgraph_file_current)
+            print(f"Levenshtein distance between the two call graphs: {distance}")
+            similarity_percentage = compare_call_graphs_similarity(callgraph_file_previous, callgraph_file_current)
+            print(f"Similarity percentage between the two call graphs: {similarity_percentage:.2f}%")
+
+        except FileNotFoundError:
+            print(f"Config file {config_file} not found.")
+        except KeyError:
+            print("Invalid or incomplete config file format.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     elif visualization_type == "2":
         callgraph_file = input("Enter the call graph file name: ")
         G = process_call_graph(callgraph_file)
@@ -79,3 +122,4 @@ if __name__ == "__main__":
         visualize_graph(G, metrics)
     else:
         print("Invalid visualization type.")
+
