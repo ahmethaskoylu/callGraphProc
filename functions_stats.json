@@ -1,8 +1,4 @@
 {
-    "call_graphs": {
-        "previous": "cpp-algortihms_a0f4e80_callgraph.txt",
-        "current": "cpp-algortihms_4fb2dbd_callgraph.txt"
-    },
     "memory_functions": {
         "malloc": 23,
         "calloc": 15,
