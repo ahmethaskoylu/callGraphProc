@@ -169,3 +169,5 @@ if __name__ == "__main__":
         # config.json dosyasına yaz
         with open('config.json', 'w') as config_file:
             json.dump(merged_data, config_file, indent=4)
+
+
