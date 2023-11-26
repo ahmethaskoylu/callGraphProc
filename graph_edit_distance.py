@@ -38,8 +38,8 @@ def compare_call_graphs_similarity(file1, file2):
 if __name__ == "__main__":
     try:
         # İki dosya adını kullanıcıdan al
-        file1 = input("Enter the first call graph file name: ")
-        file2 = input("Enter the second call graph file name: ")
+        file1 = input("Enter the first call graph file name (previous txt): ")
+        file2 = input("Enter the second call graph file name (current txt): ")
 
         # Çağrı grafiklerini oluştur
         G1 = process_call_graph(file1)
