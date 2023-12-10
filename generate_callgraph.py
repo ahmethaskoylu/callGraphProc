@@ -208,6 +208,3 @@ if __name__ == "__main__":
         with open('functions_stats.json', 'w') as json_file:
             json.dump(functions_count, json_file, indent=4)
 
-
-
-            #cpp-algortihms
