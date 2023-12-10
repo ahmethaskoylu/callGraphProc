@@ -41,6 +41,7 @@ def count_memory_functions(file_name):
     }
 
     main_found = False
+    main_line = 0
     line_number = 0
 
     with open(file_name, 'r') as file:
@@ -49,16 +50,50 @@ def count_memory_functions(file_name):
             line_number += 1
             if 'main' in line.lower():
                 main_found = True
+                main_line = line_number
 
             if main_found:
                 if 'malloc' in line:
-                    memory_functions['malloc'].append(line_number)
+                    distance = line_number - main_line
+                    paths = find_paths_to_main(main_line, line_number, lines)
+                    memory_functions['malloc'].append({'line_number': line_number, 'distance_to_main': distance})
                 if 'calloc' in line:
-                    memory_functions['calloc'].append(line_number)
+                    distance = line_number - main_line
+                    paths = find_paths_to_main(main_line, line_number, lines)
+                    memory_functions['calloc'].append({'line_number': line_number, 'distance_to_main': distance})
                 if 'free' in line:
-                    memory_functions['free'].append(line_number)
+                    distance = line_number - main_line
+                    paths = find_paths_to_main(main_line, line_number, lines)
+                    memory_functions['free'].append({'line_number': line_number, 'distance_to_main': distance})
 
     return memory_functions
+
+def find_paths_to_main(main_line, target_line, lines):
+    paths = []
+
+    def backtrack(current_line, current_path):
+        if current_line == main_line:
+            paths.append(list(current_path))
+            return
+        elif current_line < main_line:
+            return
+
+        # Geriye git ve geçişler üzerinden yolları keşfet
+        for i in range(current_line - 1, 0, -1):
+            if lines[i - 1].strip().endswith(';') or lines[i - 1].strip().endswith('}'):
+                current_path.append(i)
+                backtrack(i, current_path)
+                current_path.pop()
+
+    # Başlangıç olarak, hedef satıra kadar olan yolları bul
+    backtrack(target_line, [])
+
+    # Yolları tersine çevir, çünkü yollar geriye doğru bulunuyor
+    reversed_paths = [list(reversed(path)) for path in paths]
+
+    return reversed_paths
+
+
 
 
 # main ve program çıkışını temsil eden fonksiyonları bulma ve sayma
@@ -155,11 +190,13 @@ if __name__ == "__main__":
 
         memory_functions_data = {}
         for func_name, line_numbers in memory_functions_distance.items():
-            distance = ",".join(str(x) for x in line_numbers)
+            distance = ",".join(str(x['line_number']) for x in line_numbers)
+            paths = ",".join(str(x['distance_to_main']) for x in line_numbers)
             count = len(line_numbers)
             memory_functions_data[func_name] = {
                 'count': count,
-                'distance': distance
+                'line_number': distance,
+                'paths': paths #her line'ın maine uzaklığı
             }
 
         functions_count = {
@@ -170,3 +207,4 @@ if __name__ == "__main__":
 
         with open('functions_stats.json', 'w') as json_file:
             json.dump(functions_count, json_file, indent=4)
+
