@@ -34,23 +34,31 @@ def generate_call_graph(repo_name):
 
 # malloc, calloc, free fonksiyonlarını bulma ve sayma
 def count_memory_functions(file_name):
-    memory_functions_count = {
-        'malloc': 0,
-        'calloc': 0,
-        'free': 0
+    memory_functions = {
+        'malloc': [],
+        'calloc': [],
+        'free': []
     }
+
+    main_found = False
+    line_number = 0
 
     with open(file_name, 'r') as file:
         lines = file.readlines()
         for line in lines:
-            if 'malloc' in line:
-                memory_functions_count['malloc'] += 1
-            if 'calloc' in line:
-                memory_functions_count['calloc'] += 1
-            if 'free' in line:
-                memory_functions_count['free'] += 1
+            line_number += 1
+            if 'main' in line.lower():
+                main_found = True
 
-    return memory_functions_count
+            if main_found:
+                if 'malloc' in line:
+                    memory_functions['malloc'].append(line_number)
+                if 'calloc' in line:
+                    memory_functions['calloc'].append(line_number)
+                if 'free' in line:
+                    memory_functions['free'].append(line_number)
+
+    return memory_functions
 
 
 # main ve program çıkışını temsil eden fonksiyonları bulma ve sayma
@@ -142,30 +150,23 @@ if __name__ == "__main__":
             current_callgraph = data['call_graphs']['current']
 
         functions_statistics = find_functions_statistics(current_callgraph)
-        memory_functions_count = count_memory_functions(current_callgraph)
+        memory_functions_distance = count_memory_functions(current_callgraph)
         entry_exit_functions_count = count_entry_exit_functions(current_callgraph)
 
-        # JSON dosyasına yazma
+        memory_functions_data = {}
+        for func_name, line_numbers in memory_functions_distance.items():
+            distance = ",".join(str(x) for x in line_numbers)
+            count = len(line_numbers)
+            memory_functions_data[func_name] = {
+                'count': count,
+                'distance': distance
+            }
+
         functions_count = {
-            'memory_functions': memory_functions_count,
+            'memory_functions': memory_functions_data,
             'entry_exit_functions': entry_exit_functions_count,
             'func_stat': functions_statistics
         }
 
-        # JSON dosyasına yazma
         with open('functions_stats.json', 'w') as json_file:
             json.dump(functions_count, json_file, indent=4)
-
-        with open('config.json', 'r') as config_file:
-            config_data = json.load(config_file)
-
-        # functions_stats.json dosyasını oku
-        with open('functions_stats.json', 'r') as functions_count_file:
-            functions_stats_data = json.load(functions_count_file)
-
-        # Verileri birleştir
-        merged_data = {**config_data, **functions_stats_data}
-
-        # config.json dosyasına yaz
-        with open('config.json', 'w') as config_file:
-            json.dump(merged_data, config_file, indent=4)
