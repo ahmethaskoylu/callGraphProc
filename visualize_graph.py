@@ -32,6 +32,8 @@ def compare_call_graphs(file1, file2):
     distance = Levenshtein.distance(content1, content2)
     return distance
 
+def graph_edit_distance(graph1, graph2):
+    return nx.graph_edit_distance(graph1, graph2)
 def compare_call_graphs_similarity(file1, file2):
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
         content1 = f1.read()
@@ -84,6 +86,8 @@ def visualize_graph_comparison(G_previous, G_current):
     nx.draw_networkx_edges(G_current, pos, edgelist=added_edges, edge_color='green', width=1, alpha=0.6)
     nx.draw_networkx_edges(G_current, pos, edgelist=removed_edges, edge_color='red', width=1, alpha=0.6)
     nx.draw_networkx_edges(G_current, pos, edgelist=common_edges, edge_color='blue', width=1, alpha=0.6)
+    distance = graph_edit_distance(G_previous, G_current)
+    plt.title(f"Call Graph Comparison (Edit Distance: {distance:.2f})")
 
     plt.legend()
     plt.show()
@@ -122,4 +126,3 @@ if __name__ == "__main__":
         visualize_graph(G, metrics)
     else:
         print("Invalid visualization type.")
-
