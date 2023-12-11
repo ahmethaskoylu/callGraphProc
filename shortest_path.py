@@ -1,4 +1,5 @@
 import networkx as nx
+import json
 
 def process_call_graph(callgraph_file):
     G = nx.DiGraph()
@@ -45,14 +46,24 @@ def find_shortest_path(callgraph_file):
         print(f"No path found between {start_node} and {end_node}")
 
 if __name__ == "__main__":
-    try:
-        # Kullanıcıdan callgraph dosyasını al
-        callgraph_file = input("Enter the call graph txt file name: ")
 
-        # Otomatik en kısa yolu bul
-        find_shortest_path(callgraph_file)
+        config_file = input("Enter the path to the configuration file (config.json): ")
+        try:
+            with open(config_file, 'r') as config_f:
+                config = json.load(config_f)
 
-    except FileNotFoundError:
-        print("Call graph file not found.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+            print("1- " + config["call_graphs"]["previous"])
+            print("2- " + config["call_graphs"]["current"])
+
+            secenek = input("Enter the number of txtFile you want to use: ")
+            if secenek == 2:
+                callgraph_file= config["call_graphs"]["current"]
+            else:
+                callgraph_file = config["call_graphs"]["previous"]
+            # Otomatik en kısa yolu bul
+            find_shortest_path(callgraph_file)
+
+        except FileNotFoundError:
+            print("Call graph file not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
