@@ -14,7 +14,7 @@ def build_graph_from_file(file_path):
     return graph
 
 
-def dijkstra(graph, start, end):
+def dijkstra(graph, start, end, stop_functions):
     distances = {vertex: float('infinity') for vertex in graph}
     previous = {vertex: None for vertex in graph}
     distances[start] = 0
@@ -27,6 +27,10 @@ def dijkstra(graph, start, end):
             break
 
         for neighbor, weight in graph[current_vertex].items():
+            # Stop if the current node is any of the stop functions
+            if neighbor in stop_functions:
+                break
+
             distance = current_distance + weight
 
             if distance < distances[neighbor]:
@@ -52,11 +56,12 @@ if __name__ == "__main__":
     start_vertex = input("Başlangıç düğümü: ")
     end_vertex = input("Bitiş düğümü: ")
 
-    path, distance = dijkstra(graph, start_vertex, end_vertex)
+    # List of stop functions
+    stop_functions = ["free()", "malloc()", "calloc()"]
+
+    path, distance = dijkstra(graph, start_vertex, end_vertex, stop_functions)
 
     if distance == float('infinity'):
         print(f"{end_vertex} düğümüne ulaşılamıyor.")
     else:
         print(f"{start_vertex} ile {end_vertex} arası en kısa yol: {' -> '.join(path)}, Uzunluk: {distance}")
-
-#simplified_call_graph.txt
