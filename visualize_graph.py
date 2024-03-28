@@ -95,14 +95,25 @@ def visualize_graph_comparison(G_previous, G_current):
 def count_edge_nodes(G):
     return G.number_of_edges()
 
-def plot_edge_node_changes(commit_ids, edge_node_counts):
-    plt.plot(commit_ids, edge_node_counts, marker='o')
-    plt.xlabel('Commit IDs')
-    plt.ylabel('Number of Edge Nodes')
-    plt.title('Edge Node Changes between Commit IDs')
+def plot_edge_node_changes(commit_ids, edge_node_counts, node_counts):
+    fig, ax1 = plt.subplots()
+
+    color = 'tab:red'
+    ax1.set_xlabel('Commit IDs')
+    ax1.set_ylabel('Number of Edge', color=color)
+    ax1.plot(commit_ids, edge_node_counts, color=color, marker='o', label='Edge')
+    ax1.tick_params(axis='y', labelcolor=color)
+
+    ax2 = ax1.twinx()
+    color = 'tab:blue'
+    ax2.set_ylabel('Number of Nodes', color=color)
+    ax2.plot(commit_ids, node_counts, color=color, marker='x', label='Nodes')
+    ax2.tick_params(axis='y', labelcolor=color)
+
+    fig.tight_layout()
+    plt.title('Edge and Node Changes between Commit IDs')
     plt.grid(True)
     plt.xticks(rotation=45)
-    plt.tight_layout()
     plt.show()
 
 if __name__ == "__main__":
@@ -125,12 +136,16 @@ if __name__ == "__main__":
             similarity_percentage = compare_call_graphs_similarity(callgraph_file_previous, callgraph_file_current)
             print(f"Similarity percentage between the two call graphs: {similarity_percentage:.2f}%")
 
-            # Calculate edge node changes and plot
+            # Calculate edge and node changes and plot
             commit_ids = ["previous", "current"]
             edge_node_counts = [count_edge_nodes(G_previous), count_edge_nodes(G_current)]
-            diffCountNodes = count_edge_nodes(G_current) - count_edge_nodes(G_previous)
-            plot_edge_node_changes(commit_ids, edge_node_counts)
-            print(f"Difference Number of Edge Nodes: {diffCountNodes}")
+            node_counts = [len(G_previous.nodes()), len(G_current.nodes())]
+            plot_edge_node_changes(commit_ids, edge_node_counts, node_counts)
+
+            diffCountEdges = count_edge_nodes(G_current) - count_edge_nodes(G_previous)
+            print(f"Difference Number of Edge: {diffCountEdges}")
+            diffCountNodes = len(G_current.nodes()) - len(G_previous.nodes())
+            print(f"Difference Number of Nodes: {diffCountNodes}")
         except FileNotFoundError:
             print(f"Config file {config_file} not found.")
         except KeyError:
