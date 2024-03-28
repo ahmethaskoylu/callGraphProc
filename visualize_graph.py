@@ -138,9 +138,24 @@ if __name__ == "__main__":
             print(f"An error occurred: {e}")
 
     elif visualization_type == "2":
-        callgraph_file = input("Enter the call graph file name: ")
-        G = process_call_graph(callgraph_file)
-        metrics = calculate_metrics(G)
-        visualize_graph(G, metrics)
+        config_file = input("Enter the path to the configuration file (config.json): ")
+        try:
+            with open(config_file, 'r') as config_f:
+                config = json.load(config_f)
+
+            print("1- " + config["call_graphs"]["previous"])
+            print("2- " + config["call_graphs"]["current"])
+
+            choice = input("Enter the number of the call graph file you want to use: ")
+            callgraph_file = config["call_graphs"]["current"] if choice == '2' else config["call_graphs"]["previous"]
+
+            G = process_call_graph(callgraph_file)
+            metrics = calculate_metrics(G)
+            visualize_graph(G, metrics)
+
+        except FileNotFoundError:
+            print("Configuration file or call graph file not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
     else:
         print("Invalid visualization type.")
