@@ -33,6 +33,9 @@ def fetch_github_repo(repo_url, commit_hashes=None):
     return repo_name
 
 #https://github.com/Chetan496/cpp-algortihms
+#https://github.com/Theemiss/simple_shell
+#4112ae1221a7c5ad732161e60b79b92d151ff05d
+#51082d48358afec10f5d86f8153781fc1fe9b6a7
 
 if __name__ == "__main__":
     repo_url = input("Enter the GitHub repository URL: ")

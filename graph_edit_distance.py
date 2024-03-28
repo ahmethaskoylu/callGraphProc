@@ -52,6 +52,9 @@ if __name__ == "__main__":
         similarity_percentage = compare_call_graphs_similarity(file1, file2)
         print(f"Similarity percentage between the two call graphs: {similarity_percentage:.2f}%")
 
+        num_operations = len(added_nodes) + len(removed_nodes)
+        print(f"Number of operations required to write the current callgraph.txt file from the previous callgraph.txt file: {num_operations}")
+
         # Eklenen ve çıkan düğümleri ekrana yazdır
         print("Added Nodes:", added_nodes)
         print("Removed Nodes:", removed_nodes)
