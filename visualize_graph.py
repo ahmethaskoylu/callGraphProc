@@ -128,8 +128,9 @@ if __name__ == "__main__":
             # Calculate edge node changes and plot
             commit_ids = ["previous", "current"]
             edge_node_counts = [count_edge_nodes(G_previous), count_edge_nodes(G_current)]
+            diffCountNodes = count_edge_nodes(G_current) - count_edge_nodes(G_previous)
             plot_edge_node_changes(commit_ids, edge_node_counts)
-
+            print(f"Difference Number of Edge Nodes: {diffCountNodes}")
         except FileNotFoundError:
             print(f"Config file {config_file} not found.")
         except KeyError:
