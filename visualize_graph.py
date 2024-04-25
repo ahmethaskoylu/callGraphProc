@@ -100,8 +100,8 @@ def plot_edge_node_changes(commit_ids, edge_node_counts, node_counts):
 
     color = 'tab:red'
     ax1.set_xlabel('Commit IDs')
-    ax1.set_ylabel('Number of Edge', color=color)
-    ax1.plot(commit_ids, edge_node_counts, color=color, marker='o', label='Edge')
+    ax1.set_ylabel('Number of Edge Nodes', color=color)
+    ax1.plot(commit_ids, edge_node_counts, color=color, marker='o', label='Edge Nodes')
     ax1.tick_params(axis='y', labelcolor=color)
 
     ax2 = ax1.twinx()
@@ -110,11 +110,17 @@ def plot_edge_node_changes(commit_ids, edge_node_counts, node_counts):
     ax2.plot(commit_ids, node_counts, color=color, marker='x', label='Nodes')
     ax2.tick_params(axis='y', labelcolor=color)
 
+    max_y = max(max(edge_node_counts), max(node_counts)) + 9
+    ax1.set_ylim(0, max_y)
+    ax2.set_ylim(0, max_y)
+
     fig.tight_layout()
     plt.title('Edge and Node Changes between Commit IDs')
+    fig.legend(loc='upper left')
     plt.grid(True)
     plt.xticks(rotation=45)
     plt.show()
+
 
 if __name__ == "__main__":
     visualization_type = input("Enter the visualization type (1 for comparison, 2 for single): ")
@@ -142,10 +148,8 @@ if __name__ == "__main__":
             node_counts = [len(G_previous.nodes()), len(G_current.nodes())]
             plot_edge_node_changes(commit_ids, edge_node_counts, node_counts)
 
-            diffCountEdges = count_edge_nodes(G_current) - count_edge_nodes(G_previous)
-            print(f"Difference Number of Edge: {diffCountEdges}")
-            diffCountNodes = len(G_current.nodes()) - len(G_previous.nodes())
-            print(f"Difference Number of Nodes: {diffCountNodes}")
+            diffCountNodes = count_edge_nodes(G_current) - count_edge_nodes(G_previous)
+            print(f"Difference Number of Edge Nodes: {diffCountNodes}")
         except FileNotFoundError:
             print(f"Config file {config_file} not found.")
         except KeyError:
