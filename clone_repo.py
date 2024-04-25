@@ -1,9 +1,11 @@
 import subprocess
 import shutil
 import os
-
+import time
 
 def fetch_github_repo(repo_url, commit_hashes=None):
+    start_time = time.time()
+
     repo_name = repo_url.split("/")[-1].replace(".git", "")
     subprocess.run(["git", "clone", repo_url])
 
@@ -30,6 +32,10 @@ def fetch_github_repo(repo_url, commit_hashes=None):
 
             print(f"Repository content at commit {commit_hash} has been copied to {commit_dir}")
 
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time: {elapsed_time} seconds")
+
     return repo_name
 
 #https://github.com/Chetan496/cpp-algortihms
@@ -37,6 +43,7 @@ def fetch_github_repo(repo_url, commit_hashes=None):
 #4fb2dbd7e30efe882c4f867fcaab149e69698dee
 #https://github.com/Theemiss/simple_shell
 #4112ae1221a7c5ad732161e60b79b92d151ff05d
+#05395b528d3959f4ffd9e207a48200589f9440fd
 #51082d48358afec10f5d86f8153781fc1fe9b6a7
 
 if __name__ == "__main__":
