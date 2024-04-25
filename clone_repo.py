@@ -2,17 +2,17 @@ import subprocess
 import shutil
 import os
 import time
+import glob
 
 def count_lines_of_code(repo_name):
-    c_files = subprocess.check_output(["find", repo_name, "-name", "*.c"]).decode("utf-8").strip().split("\n")
+    c_files = glob.glob(os.path.join(repo_name, "**/*.c"), recursive=True)
 
     total_lines = 0
     for c_file in c_files:
-        # Use wc command to count lines in each file
-        line_count_output = subprocess.check_output(["wc", "-l", c_file]).decode("utf-8").strip()
-        # Extract the line count from the output
-        lines = int(line_count_output.split()[0])
-        total_lines += lines
+        with open(c_file, 'r') as file:
+            lines = sum(1 for line in file)
+            print(f"{c_file} contains {lines} lines.")
+            total_lines += lines
 
     return total_lines
 
@@ -73,7 +73,6 @@ if __name__ == "__main__":
 
 #https://github.com/emirhancavusoglu/cLang2
 #newest
-#3f5bf70084ab165fd9fcd0b815b4cf34cfe30e34
+#d927ef5e9369abf531f17454187ccf81062dad63
 #oldest
-#28a9821247808f80f92d57db18b6fd469224b749
-
+#1ddf85fd5ff6e6c3dad5c1c5128a28ec2978c66a
