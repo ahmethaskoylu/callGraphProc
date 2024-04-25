@@ -3,6 +3,19 @@ import shutil
 import os
 import time
 
+def count_lines_of_code(repo_name):
+    c_files = subprocess.check_output(["find", repo_name, "-name", "*.c"]).decode("utf-8").strip().split("\n")
+
+    total_lines = 0
+    for c_file in c_files:
+        # Use wc command to count lines in each file
+        line_count_output = subprocess.check_output(["wc", "-l", c_file]).decode("utf-8").strip()
+        # Extract the line count from the output
+        lines = int(line_count_output.split()[0])
+        total_lines += lines
+
+    return total_lines
+
 def fetch_github_repo(repo_url, commit_hashes=None):
     start_time = time.time()
 
@@ -38,19 +51,29 @@ def fetch_github_repo(repo_url, commit_hashes=None):
 
     return repo_name
 
-#https://github.com/Chetan496/cpp-algortihms
-#bf28bdf7a2d32050d7369d933e2de1cff4c8988e
-#4fb2dbd7e30efe882c4f867fcaab149e69698dee
-#https://github.com/Theemiss/simple_shell
-#4112ae1221a7c5ad732161e60b79b92d151ff05d
-#05395b528d3959f4ffd9e207a48200589f9440fd
-#51082d48358afec10f5d86f8153781fc1fe9b6a7
-
 if __name__ == "__main__":
     repo_url = input("Enter the GitHub repository URL: ")
-    commit_hashes = input("Enter the commit hashes (optional, separated by spaces): ")
+    commit_hashes = input("Enter the commit hashes (oldest to newest one) (optional, separated by spaces): ")
     commit_hashes = commit_hashes.split() if commit_hashes else None
     repo_name = fetch_github_repo(repo_url, commit_hashes)
     print(f"Repository {repo_name} has been cloned.")
+    # Count lines of code
+    total_lines = count_lines_of_code(repo_name)
+    print(f"Total lines of code in .c files: {total_lines}")
 
+#https://github.com/Chetan496/cpp-algortihms
+#bf28bdf7a2d32050d7369d933e2de1cff4c8988e
+#4fb2dbd7e30efe882c4f867fcaab149e69698dee
+
+#https://github.com/Theemiss/simple_shell
+#newest
+#51082d48358afec10f5d86f8153781fc1fe9b6a7
+#oldest
+#4112ae1221a7c5ad732161e60b79b92d151ff05d
+
+#https://github.com/emirhancavusoglu/cLang2
+#newest
+#3f5bf70084ab165fd9fcd0b815b4cf34cfe30e34
+#oldest
+#28a9821247808f80f92d57db18b6fd469224b749
 

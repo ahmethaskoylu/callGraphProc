@@ -57,6 +57,7 @@ if __name__ == "__main__":
         print(f"Similarity percentage between the two call graphs: {similarity_percentage:.2f}%")
 
         # Number of operations
+        # şu an sadece node hesabı yapılıyor, edge hesabı da yapılmalı mı hocaya sor!
         num_operations = len(added_nodes) + len(removed_nodes)
         print(f"Number of operations required to write the current callgraph.txt file from the previous callgraph.txt file: {num_operations}")
 

@@ -95,6 +95,9 @@ def visualize_graph_comparison(G_previous, G_current):
 def count_edge_nodes(G):
     return G.number_of_edges()
 
+def count_nodes(G):
+    return G.number_of_nodes()
+
 def plot_edge_node_changes(commit_ids, edge_node_counts, node_counts):
     fig, ax1 = plt.subplots()
 
@@ -150,6 +153,8 @@ if __name__ == "__main__":
 
             diffCountNodes = count_edge_nodes(G_current) - count_edge_nodes(G_previous)
             print(f"Difference Number of Edge Nodes: {diffCountNodes}")
+            diffCountNodes2 = count_nodes(G_current) - count_nodes(G_previous)
+            print(f"Difference Number of Nodes: {diffCountNodes2}")
         except FileNotFoundError:
             print(f"Config file {config_file} not found.")
         except KeyError:
