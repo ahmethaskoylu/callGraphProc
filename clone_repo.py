@@ -1,9 +1,24 @@
 import subprocess
 import shutil
 import os
+import time
+import glob
 
+def count_lines_of_code(repo_name):
+    c_files = glob.glob(os.path.join(repo_name, "**/*.c"), recursive=True)
+
+    total_lines = 0
+    for c_file in c_files:
+        with open(c_file, 'r') as file:
+            lines = sum(1 for line in file)
+            print(f"{c_file} contains {lines} lines.")
+            total_lines += lines
+
+    return total_lines
 
 def fetch_github_repo(repo_url, commit_hashes=None):
+    start_time = time.time()
+
     repo_name = repo_url.split("/")[-1].replace(".git", "")
     subprocess.run(["git", "clone", repo_url])
 
@@ -30,15 +45,34 @@ def fetch_github_repo(repo_url, commit_hashes=None):
 
             print(f"Repository content at commit {commit_hash} has been copied to {commit_dir}")
 
-    return repo_name
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time: {elapsed_time} seconds")
 
-#https://github.com/Chetan496/cpp-algortihms
+    return repo_name
 
 if __name__ == "__main__":
     repo_url = input("Enter the GitHub repository URL: ")
-    commit_hashes = input("Enter the commit hashes (optional, separated by spaces): ")
+    commit_hashes = input("Enter the commit hashes (oldest to newest one) (optional, separated by spaces): ")
     commit_hashes = commit_hashes.split() if commit_hashes else None
     repo_name = fetch_github_repo(repo_url, commit_hashes)
     print(f"Repository {repo_name} has been cloned.")
+    # Count lines of code
+    total_lines = count_lines_of_code(repo_name)
+    print(f"Total lines of code in .c files: {total_lines}")
 
+#https://github.com/Chetan496/cpp-algortihms
+#bf28bdf7a2d32050d7369d933e2de1cff4c8988e
+#4fb2dbd7e30efe882c4f867fcaab149e69698dee
 
+#https://github.com/Theemiss/simple_shell
+#newest
+#51082d48358afec10f5d86f8153781fc1fe9b6a7
+#oldest
+#4112ae1221a7c5ad732161e60b79b92d151ff05d
+
+#https://github.com/emirhancavusoglu/cLang2
+#newest
+#d927ef5e9369abf531f17454187ccf81062dad63
+#oldest
+#1ddf85fd5ff6e6c3dad5c1c5128a28ec2978c66a

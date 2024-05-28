@@ -18,12 +18,13 @@ def process_call_graph(callgraph_file):
         stack.append(func_name)
 
     return G
+
 def calculate_edit_distance(graph1, graph2):
-    # Eklenen düğümleri bulmak için iki grafın farkını al
     added_nodes = set(graph2.nodes) - set(graph1.nodes)
     removed_nodes = set(graph1.nodes) - set(graph2.nodes)
 
     return added_nodes, removed_nodes
+
 def compare_call_graphs_similarity(file1, file2):
     with open(file1, 'r') as f1, open(file2, 'r') as f2:
         content1 = f1.read()
@@ -36,23 +37,31 @@ def compare_call_graphs_similarity(file1, file2):
     return similarity_percentage
 
 if __name__ == "__main__":
+    print("CallGraph.txt files are automatically pulled from the config.json file...")
     try:
-        # İki dosya adını kullanıcıdan al
-        file1 = input("Enter the first call graph file name (previous txt): ")
-        file2 = input("Enter the second call graph file name (current txt): ")
+        # Read file names from config.json
+        with open('config.json') as config_file:
+            config = json.load(config_file)
+            file1 = config["call_graphs"]["previous"]
+            file2 = config["call_graphs"]["current"]
 
-        # Çağrı grafiklerini oluştur
+        # Process call graphs
         G1 = process_call_graph(file1)
         G2 = process_call_graph(file2)
 
-        # Edit mesafesini hesapla
+        # Calculate edit distance
         added_nodes, removed_nodes = calculate_edit_distance(G1, G2)
 
-        # Görselleştirme için benzerlik yüzdesini hesapla
+        # Compare graphs similarity
         similarity_percentage = compare_call_graphs_similarity(file1, file2)
         print(f"Similarity percentage between the two call graphs: {similarity_percentage:.2f}%")
 
-        # Eklenen ve çıkan düğümleri ekrana yazdır
+        # Number of operations
+        # şu an sadece node hesabı yapılıyor, edge hesabı da yapılmalı mı hocaya sor!
+        num_operations = len(added_nodes) + len(removed_nodes)
+        print(f"Number of operations required to write the current callgraph.txt file from the previous callgraph.txt file: {num_operations}")
+
+        # Added and removed nodes
         print("Added Nodes:", added_nodes)
         print("Removed Nodes:", removed_nodes)
     except FileNotFoundError:
