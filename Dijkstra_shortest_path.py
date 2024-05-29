@@ -2,7 +2,6 @@ import re
 from collections import defaultdict
 import heapq
 
-
 def build_graph_from_file(file_path):
     graph = defaultdict(dict)
     with open(file_path, 'r') as f:
@@ -50,11 +49,11 @@ def dijkstra(graph, start, end, stop_functions):
 
 
 if __name__ == "__main__":
-    file_path = input("Basitleştirilmiş call graph dosyasının yolu: ")
+    file_path = input("Enter the path to the simplified call graph file: ")
     graph = build_graph_from_file(file_path)
 
-    start_vertex = input("Başlangıç düğümü: ")
-    end_vertex = input("Bitiş düğümü: ")
+    start_vertex = input("Start Node: ")
+    end_vertex = input("End Node: ")
 
     # List of stop functions
     stop_functions = ["free()", "malloc()", "calloc()"]
@@ -64,5 +63,5 @@ if __name__ == "__main__":
     if distance == float('infinity'):
         print(f"{end_vertex} düğümüne ulaşılamıyor.")
     else:
-        print(f"{start_vertex} ile {end_vertex} arası en kısa yol: {' -> '.join(path)}, Uzunluk: {distance}")
+        print(f"Shortest path between {start_vertex} and {end_vertex}: {' -> '.join(path)}, Length: {distance}")
 

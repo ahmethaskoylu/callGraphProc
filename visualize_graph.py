@@ -103,7 +103,7 @@ def plot_edge_node_changes(commit_ids, edge_node_counts, node_counts):
 
     color = 'tab:red'
     ax1.set_xlabel('Commit IDs')
-    ax1.set_ylabel('Number of Edge Nodes', color=color)
+    ax1.set_ylabel('Number of Edges', color=color)
     ax1.plot(commit_ids, edge_node_counts, color=color, marker='o', label='Edge Nodes')
     ax1.tick_params(axis='y', labelcolor=color)
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             plot_edge_node_changes(commit_ids, edge_node_counts, node_counts)
 
             diffCountNodes = count_edge_nodes(G_current) - count_edge_nodes(G_previous)
-            print(f"Difference Number of Edge Nodes: {diffCountNodes}")
+            print(f"Difference Number of Edges: {diffCountNodes}")
             diffCountNodes2 = count_nodes(G_current) - count_nodes(G_previous)
             print(f"Difference Number of Nodes: {diffCountNodes2}")
         except FileNotFoundError:
